@@ -48,8 +48,8 @@ namespace Todo.Api.Controllers
         }
 
         // PUT api/<TodoController>/5
-        [HttpPut]
-        public void Put([FromBody] string value)
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] string value)
         {
             var todoEntity = JsonConvert.DeserializeObject<Todos>(value);
             this.todoService.Update(todoEntity);
@@ -59,6 +59,7 @@ namespace Todo.Api.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            this.todoService.Delete(id);
         }
     }
 }

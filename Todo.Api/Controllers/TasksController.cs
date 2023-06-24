@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Todo.Api.Interfaces;
+using Todo.Api.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +11,49 @@ namespace Todo.Api.Controllers
     [ApiController]
     public class TasksController : ControllerBase
     {
-        // GET: api/<TasksController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly ITodoService todoService;
+        private readonly ITaskService taskService;
+
+        public TasksController
+        (
+            ITodoService todoService,
+            ITaskService taskService
+        )
         {
-            return new string[] { "value1", "value2" };
+            this.todoService = todoService;
+            this.taskService = taskService;
         }
 
-        // GET api/<TasksController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+
+
+        // GET: api/<TasksController>
+        [HttpGet("{todoId}")]
+        public async Task<string> Get(int todoId)
         {
-            return "value";
+            return JsonConvert.SerializeObject(await this.taskService.GetTasks(todoId));
         }
 
         // POST api/<TasksController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("{todoId}")]
+        public void Post(int todoId, [FromBody] string value)
         {
+            var taskEntity = JsonConvert.DeserializeObject<Tasks>(value);
+            this.taskService.Add(taskEntity);
         }
 
         // PUT api/<TasksController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
+            var taskEntity = JsonConvert.DeserializeObject<Tasks>(value);
+            this.taskService.Update(taskEntity);
         }
 
         // DELETE api/<TasksController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            this.taskService.Delete(id);
         }
     }
 }

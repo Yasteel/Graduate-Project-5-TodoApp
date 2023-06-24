@@ -43,37 +43,5 @@ namespace Todo.Api.Services
             this.context.Set<T>().Remove(entity!);
             await this.context.SaveChangesAsync();
         }
-
-        //public T? FindByField(string fieldName, object value)
-        //{
-        //    return this.GetAll().FirstOrDefault(_ =>
-        //    {
-        //        var propertyInfo = typeof(T).GetProperty(fieldName);
-        //        if (propertyInfo == null)
-        //        {
-        //            return false;
-        //        }
-
-        //        var property = propertyInfo.GetValue(_);
-
-        //        return Equals(property, value);
-        //    });
-        //}
-
-        //public List<T> FindAllByField(string fieldName, object value)
-        //{
-        //    return this.GetAll().FindAll(_ =>
-        //    {
-        //        var propertyInfo = typeof(T).GetProperty(fieldName);
-        //        if (propertyInfo == null)
-        //        {
-        //            return false;
-        //        }
-
-        //        var property = propertyInfo.GetValue(_);
-
-        //        return Equals(property, value);
-        //    });
-        //}
     }
 }
