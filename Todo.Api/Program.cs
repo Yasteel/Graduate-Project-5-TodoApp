@@ -16,7 +16,7 @@ internal class Program
 
         builder.Services.AddControllers();
 
-        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Default")));
+        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Personal")));
         builder.Services.AddScoped<ITodoService, TodoService>();
         builder.Services.AddScoped<ITaskService, TaskService>();
 
