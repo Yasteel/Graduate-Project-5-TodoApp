@@ -25,34 +25,26 @@ namespace Todo.Api.Controllers
         }
 
         // GET: api/<TodoController>
-        [HttpGet]
-        public async Task<string> Get()
+        [HttpGet("{userId}")]
+        public async Task<string> Get(int userId)
         {
-            return JsonConvert.SerializeObject(await this.todoService.GetTodos(1));
-        }
-
-        // GET: api/Todo/{todoId}/task
-        // Gets all tasks related to Todo item
-        [HttpGet("{id}")]
-        public async Task<string> Get(int id)
-        {
-            return JsonConvert.SerializeObject(await this.todoService.GetById(id));
+            return JsonConvert.SerializeObject(await this.todoService.GetTodos(userId));
         }
 
         // POST api/<TodoController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("{userId}")]
+        public void Post(int userId, [FromBody] Todos value)
         {
-            var todoEntity = JsonConvert.DeserializeObject<Todos>(value);
-            this.todoService.Add(todoEntity);
+            this.todoService.Add(value);
         }
 
         // PUT api/<TodoController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPatch("{id}")]
+        public void Patch(int id, [FromBody] Todos value)
         {
-            var todoEntity = JsonConvert.DeserializeObject<Todos>(value);
-            this.todoService.Update(todoEntity);
+            var todoEdit = this.todoService.GetById(id);
+            todoEdit.Description = value.Description;
+            this.todoService.Update(todoEdit);
         }
 
         // DELETE api/<TodoController>/5

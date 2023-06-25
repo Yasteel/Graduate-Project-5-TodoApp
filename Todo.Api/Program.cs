@@ -15,8 +15,14 @@ internal class Program
 
 
         builder.Services.AddControllers();
-
-        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Personal")));
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            });
+        });
+        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Default")));
         builder.Services.AddScoped<ITodoService, TodoService>();
         builder.Services.AddScoped<ITaskService, TaskService>();
 
@@ -34,7 +40,7 @@ internal class Program
         }
 
         app.UseHttpsRedirection();
-
+        app.UseCors();
         app.UseAuthorization();
 
         app.MapControllers();

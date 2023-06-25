@@ -19,29 +19,29 @@ namespace Todo.Api.Services
             return await this.context.Set<T>().ToListAsync();
         }
 
-        public async Task<T> GetById(int id)
+        public T GetById(int id)
         {
-            return await this.context.Set<T>().FindAsync(id);
+            return this.context.Set<T>().Find(id);
         }
 
-        public async void Add(T entity)
+        public void Add(T entity)
         {
-            await this.context.Set<T>().AddAsync(entity);
-            await this.context.SaveChangesAsync();
+            this.context.Set<T>().Add(entity);
+            this.context.SaveChanges();
         }
 
-        public async void Update(T entity)
+        public void Update(T entity)
         {
             this.context.Set<T>().Attach(entity);
             this.context.Entry(entity).State = EntityState.Modified;
-            await this.context.SaveChangesAsync();
+            this.context.SaveChanges();
         }
 
-        public async void Delete(int id)
+        public void Delete(int id)
         {
-            T? entity = await this.context.Set<T>().FindAsync(id);
+            T? entity = this.context.Set<T>().Find(id);
             this.context.Set<T>().Remove(entity!);
-            await this.context.SaveChangesAsync();
+            this.context.SaveChanges();
         }
     }
 }
