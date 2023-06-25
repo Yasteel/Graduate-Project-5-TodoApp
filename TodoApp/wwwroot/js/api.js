@@ -1,10 +1,14 @@
+function test() {
+    console.log("Test - call from vue setup");
+}
+
 // ============================= TODOs =============================
 
 // GET
-function getTodo(userId) {
+function getTodo(userId, test) {
     axios
         .get(`https://localhost:7137/api/Todo/${userId}`)
-        .then(res => console.log(res))
+        .then(res => test(res.data))
         .catch(err => console.error(err));
 }
 

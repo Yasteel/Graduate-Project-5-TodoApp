@@ -5,57 +5,60 @@
             <a href="#" @click="handleClick"><i class="fa-solid fa-plus highlight"></i></a>
         </div>
         <div class="todos">
-            <div class="todo">
-                <div class="info">
-                    <p>Description</p>
+           
+            <div v-for="todo in todos" class="todo">
+                <div class="todoInfo">
+                    <div class="info">
+                        <p>{{ todo.Todo.Description }}</p>
+                    </div>
+                    <div class="controls">
+                        <div class="complete"></div>
+                        <a href="#"><i class="fa-solid fa-trash highlight"></i></a>
+                        <a href="#"><i class="fa-solid fa-plus highlight"></i></a>
+                    </div>
                 </div>
-                <div class="controls">
-                    <div class="complete"></div>
-                    <a href="#"><i class="fa-solid fa-trash highlight"></i></a>
-                    <a href="#"><i class="fa-solid fa-plus highlight"></i></a>
-                </div>
-            </div>
-            <div class="todo">
-                <div class="info">
-                    <p>Description</p>
-                </div>
-                <div class="controls">
-                    <div class="complete"></div>
-                    <a href="#"><i class="fa-solid fa-trash highlight"></i></a>
-                    <a href="#"><i class="fa-solid fa-plus highlight"></i></a>
-                </div>
-            </div>
-            <div class="todo">
-                <div class="info">
-                    <p>Description</p>
-                </div>
-                <div class="controls">
-                    <div class="complete"></div>
-                    <a href="#"><i class="fa-solid fa-trash highlight"></i></a>
-                    <a href="#"><i class="fa-solid fa-plus highlight"></i></a>
+                <div class="tasks" v-if="todo.Tasks.length != 0">
+                    <div class="task" v-for="task in todo.Tasks">
+                        <p>{{ task.TaskName }}</p>
+                        <p>{{ task.Status }}</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <div>
+        <ul>
+            <li v-for="todo in todos">{{ todo.Tasks }}</li>
+        </ul>
+    </div>
 </template>
-
 <script>
     import { ref } from 'vue'
 
     export default {
         name: 'Home',
         setup() {
-            const name = ref("Yasteel")
-            const surname = ref("Gungapursat")
+            
+
+            const todos = ref([])
+            
+
+            getTodo(1, (data) => {
+                console.log(data);
+                $.each(data, (i, v) => {
+                    todos.value.push(v);
+                });
+            });
+
 
             //const p = ref(name)
 
             const handleClick = () => {
-                //name.value = name.value == "Yasteel" ? "" : "Yasteel" 
+                //name.value = name.value == "Yasteel" ? "" : "Yasteel"
                 alert("awe");
             }
 
-            return { name, surname, handleClick };
+            return { todos, handleClick };
         },
         data() {
             return {
@@ -66,11 +69,11 @@
 </script>
 
 <style scoped>
-    *{
+    * {
         font-family: Helvetica, sans-serif;
     }
 
-    body{
+    body {
     }
 
     .highlight {
@@ -87,7 +90,7 @@
         margin-bottom: 1rem;
     }
 
-    p{
+    p {
         padding: 0;
         margin: 0;
     }
@@ -100,7 +103,7 @@
         gap: 1rem;
     }
 
-    .todo {
+    .todoInfo {
         background: #4E4C4C;
         display: flex;
         justify-content: space-between;
@@ -108,9 +111,7 @@
         padding: 1rem;
     }
 
-    .todo a{
+    .todoInfo a {
         margin-left: 1.5rem;
     }
-
-    
 </style>
