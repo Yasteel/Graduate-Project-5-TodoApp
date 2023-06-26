@@ -34,19 +34,31 @@ namespace Todo.Api.Controllers
         }
 
         // POST api/<TasksController>
-        [HttpPost("{todoId}")]
-        public void Post(int todoId, [FromBody] string value)
+        [HttpPost]
+        public void Post([FromBody] Tasks value)
         {
-            var taskEntity = JsonConvert.DeserializeObject<Tasks>(value);
-            this.taskService.Add(taskEntity);
+            value.CreatedDate = DateTime.Now;
+            this.taskService.Add(value);
         }
 
         // PUT api/<TasksController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPatch("{id}")]
+        public void Patch(int id, [FromBody] Tasks value)
         {
-            var taskEntity = JsonConvert.DeserializeObject<Tasks>(value);
-            this.taskService.Update(taskEntity);
+            var taskEdit = this.taskService.GetById(id);
+
+            if (value.Status is not null && value.Status.Length > 0)
+            {
+                taskEdit.Status = value.Status;
+            }
+
+            if(value.Description is not null && value.Description.Length > 0)
+            {
+                taskEdit.Description = value.Description;
+            }
+
+
+            this.taskService.Update(taskEdit);
         }
 
         // DELETE api/<TasksController>/5

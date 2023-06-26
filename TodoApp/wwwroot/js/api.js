@@ -30,7 +30,7 @@ function createTodo(userId, description) {
         .catch(err => console.error(err));
 }
 
-// PUT
+// PATCH
 function updateTodo(todoId, description) {
     axios
         .patch(`https://localhost:7137/api/Todo/${todoId}`, {
@@ -56,16 +56,46 @@ function getTask(userId) {
 }
 
 // POST
-function createTask() {
+function createTask(name, description, callback) {
+    let data = JSON.stringify({
+        TodoId: 1,
+        TaskName: name,
+        Status: "New",
+        Description: description
+    });
 
+    axios
+        .post(`https://localhost:7137/api/Tasks`, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => callback(res))
+        .catch(err => console.error(err));
 }
 
 // PUT
-function updateTask() {
+function updateTask(taskId, description, status, callback) {
+    let data = JSON.stringify({
+        TaskName: "",
+        Status: status,
+        Description: description
 
+    });
+    axios
+        .patch(`https://localhost:7137/api/Tasks/${taskId}`, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => callback(res))
+        .catch(err => console.error(err));
 }
 
 // DELETE
-function deleteTask() {
-
+function deleteTask(taskId, callback) {
+    axios
+        .delete(`https://localhost:7137/api/Tasks/${taskId}`)
+        .then(res => callback(res))
+        .catch(err => console.error(err));
 }

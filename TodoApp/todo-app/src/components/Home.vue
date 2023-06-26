@@ -1,35 +1,39 @@
 <template>
     <div class="container">
         <div class="header">
-            <p>My Todos</p>
-            <a href="#" @click="handleClick"><i class="fa-solid fa-plus highlight"></i></a>
+            <div class="inputs">
+                <input type="text" id="name" placeholder="Name" />
+                <input type="text" id="description" placeholder="Description" />
+            </div>
+            <button @click="addTodo">Add Todo <span><i class="fa-solid fa-plus highlight"></i></span></button>
+
         </div>
-        <div class="todos">
            
-            <div v-for="todo in todos" class="todo">
-                <div class="todoInfo">
-                    <div class="info">
-                        <p>{{ todo.Todo.Description }}</p>
-                    </div>
-                    <div class="controls">
-                        <div class="complete"></div>
-                        <a href="#"><i class="fa-solid fa-trash highlight"></i></a>
-                        <a href="#"><i class="fa-solid fa-plus highlight"></i></a>
-                    </div>
-                </div>
-                <div class="tasks" v-if="todo.Tasks.length != 0">
-                    <div class="task" v-for="task in todo.Tasks">
-                        <p>{{ task.TaskName }}</p>
-                        <p>{{ task.Status }}</p>
+        <div v-for="todo in todos" class="todo">
+            <div class="tasks" v-if="todo.Tasks.length != 0">
+                    
+                <div class="task" v-for="task in todo.Tasks">
+                    <div class="taskInfo">
+                        <div class="info">
+                            <p>{{ task.TaskName }}</p>
+                            <p>{{ task.Description }}</p>
+                            <p>{{ task.TaskId }}</p>
+                        </div>
+                            
+                        <div class="controls">
+
+                            <button :data-taskid="task.TaskId" @click="completeTodo" class="status" v-if="task.Status.toLowerCase() == 'new'">Complete</button>
+                            <button class="status" v-else disabled>Complete <span><i class="fa-solid fa-check highlight"></i></span></button>
+
+                            <button><i class="fa-solid fa-pen highlight"></i></button>
+                            <button :data-taskid="task.TaskId" @click="deleteTodo"><i class="fa-solid fa-trash highlight"></i></button>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div>
-        <ul>
-            <li v-for="todo in todos">{{ todo.Tasks }}</li>
-        </ul>
+        
     </div>
 </template>
 <script>
@@ -44,7 +48,7 @@
             
 
             getTodo(1, (data) => {
-                console.log(data);
+                todos.value = [];
                 $.each(data, (i, v) => {
                     todos.value.push(v);
                 });
@@ -53,12 +57,63 @@
 
             //const p = ref(name)
 
-            const handleClick = () => {
-                //name.value = name.value == "Yasteel" ? "" : "Yasteel"
-                alert("awe");
+            const addTodo = () => {
+                var name = $("input#name").val();
+                var description = $("input#description").val();
+
+                if (name.length < 1 || description.length < 1) {
+                    alert("Fields cannot be left Empty");
+                }
+                else {
+                    createTask(name, description, (res) => {
+                        console.log(res);
+
+                        if (res.status = 200) {
+                            getTodo(1, (data) => {
+                                todos.value = [];
+                                $.each(data, (i, v) => {
+                                    todos.value.push(v);
+                                });
+                            });
+                        }
+                    });
+                }
             }
 
-            return { todos, handleClick };
+            const deleteTodo = (e) => {
+                var taskId = $(e.target).closest("button").attr("data-taskid");
+                deleteTask(taskId, (res) => {
+                    console.log(res);
+
+                    if (res.status == 200) {
+                        getTodo(1, (data) => {
+                            todos.value = [];
+                            $.each(data, (i, v) => {
+                                todos.value.push(v);
+                            });
+                        });
+                    }
+                });
+            };
+
+            const completeTodo = (e) => {
+                var taskId = $(e.target).closest("button").attr("data-taskid");
+
+                updateTask(taskId, "", "complete", (res) => {
+                    if (res.status == 200) {
+                        getTodo(1, (data) => {
+                            todos.value = [];
+                            $.each(data, (i, v) => {
+                                todos.value.push(v);
+                            });
+                        });
+                    }
+                });
+
+
+            };
+
+            return { todos, addTodo, deleteTodo, completeTodo };
         },
         data() {
             return {
@@ -68,16 +123,13 @@
     }
 </script>
 
-<style scoped>
+<style >
     * {
         font-family: Helvetica, sans-serif;
     }
 
     body {
-    }
-
-    .highlight {
-        color: #6BE91B;
+        background: #242424;
     }
 
     .header {
@@ -95,23 +147,76 @@
         margin: 0;
     }
 
-    .todos {
-        background: #3A3A3A;
+    input, button{
+        background: none;
         color: white;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
+        border: none;
+        outline: none;
+        padding: .5rem 1rem;
+        margin-right: 1rem;
+        box-shadow: 0 0 1px 0 white;
+        border-radius: 5px;
+        transition: box-shadow 300ms ease-in-out;
     }
 
-    .todoInfo {
-        background: #4E4C4C;
+    .inputs input:last-child{
+        width: 400px;
+    }
+
+    .inputs input:is(:hover, :focus), button:is(:hover, :focus) {
+        box-shadow: 0 0 5px 0 #2EF536;
+    }
+
+    button:is(:hover, :focus), button:is(:hover, :focus) i{
+        color: #2EF536;
+    }
+
+    button span{
+        margin-left: 1rem;
+    }
+
+    /*tasks*/
+    .tasks {
+        background: #3A3A3A;
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem;
+        flex-direction: column;
+        gap: 2rem;
+        border-bottom: 1px solid #242424;
+        color: white;
+    }
+
+    .taskInfo{
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1rem;
+
     }
 
-    .todoInfo a {
-        margin-left: 1.5rem;
+    .taskInfo p:first-child{
+        color: #2EF536;
     }
+
+    .taskInfo .controls{
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .taskDescription{
+        padding: 0 2rem;
+    }
+
+    a{
+        padding: .7rem;
+    }
+
+    a:is(:hover,:focus){
+        box-shadow: 0 0 5px 0px #ffffff52;
+    }
+
+    a:is(:hover, :focus) i{
+        color: #6BE91B;
+    }
+
 </style>
