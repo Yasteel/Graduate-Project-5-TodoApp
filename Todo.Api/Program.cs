@@ -13,6 +13,8 @@ internal class Program
         var configBuilder = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
         var configuration = configBuilder.Build();
 
+        //check docs
+
 
         builder.Services.AddControllers();
         builder.Services.AddCors(options =>

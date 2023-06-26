@@ -75,9 +75,9 @@ function createTask(name, description, callback) {
 }
 
 // PUT
-function updateTask(taskId, description, status, callback) {
+function updateTask(taskId, name, description, status, callback) {
     let data = JSON.stringify({
-        TaskName: "",
+        TaskName: name,
         Status: status,
         Description: description
 
